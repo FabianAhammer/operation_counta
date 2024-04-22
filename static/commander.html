@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Commander</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
+</head>
+<style>
+    .h2 {
+        font-weight: bold;
+        font-size: 2rem;
+        font-family: "Work Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+    }
+
+    .countainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        color: white;
+        flex: 1;
+    }
+
+    .outer_container {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 6rem 1fr;
+        height: 100vh;
+    }
+
+    .outer_container > countainer {
+        height: 100%;
+        flex: 1;
+    }
+
+    .outer_container button {
+        border-radius: 10rem;
+        font-family: "Work Sans", sans-serif;
+        outline: none;
+        background-color: rgba(218, 217, 217, 0.34);
+        border: none;
+        color: white;
+        font-weight: bold;
+        font-size: 3rem;
+        width: 5rem;
+        height: 5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: .5rem;
+    }
+
+    .red {
+        transform: rotateZ(180deg);
+        background: #ef4e28;
+    }
+
+    .blue {
+        background: #3c9dfb
+    }
+
+    .spacer {
+        display: flex;
+        height: 100%;
+        background: #515151;
+        align-items: center;
+        justify-content: center;
+    }
+
+    body {
+        margin: unset;
+        height: 100vh;
+    }
+</style>
+<body>
+<div class="outer_container">
+    <div class="countainer red">
+        <div style="display: flex;align-items: center">
+            <button onclick="decrease('red')">-</button>
+            <span class="h2" style="padding: 0 2rem" id="red_life">-</span>
+            <button onclick="increase('red')">+</button>
+        </div>
+    </div>
+    <div class="spacer">
+        <button onclick="reset()">⟳</button>
+    </div>
+    <div class="countainer blue">
+        <div style="display: flex; align-items: center">
+            <button onclick="decrease('blue')">-</button>
+            <span class="h2" style="padding: 0 2rem" id="blue_life">-</span>
+            <button onclick="increase('blue')">+</button>
+        </div>
+    </div>
+</div>
+<script>
+    const ws = new WebSocket("ws://localhost:8000/ws");
+
+    ws.onmessage = function (event) {
+        const red_life = document.getElementById("red_life");
+        const blue_life = document.getElementById("blue_life");
+        data = JSON.parse(event.data);
+
+        red_life.innerText = data?.red?.points ?? "-";
+        blue_life.innerText = data?.blue?.points ?? "-";
+
+
+        setTimeout(() => {
+            if (data.red.points === 0) {
+                alert("Blue Wins!");
+            } else if (data.blue.points === 0) {
+                alert("Red Wins!");
+            }
+        }, 100);
+
+    };
+
+    function increase(side) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/increase?side=${side}`, true);
+        xhr.send(null);
+    }
+
+    function decrease(side) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/decrease?side=${side}`, true);
+        xhr.send(null);
+    }
+
+    function reset() {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/reset`, true);
+        xhr.send(null);
+    }
+
+    function initData() {
+        setTimeout(() => {
+            ws.send("test");
+        }, 50);
+    }
+
+    initData();
+</script>
+</body>
+</html>

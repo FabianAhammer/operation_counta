@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
+</head>
+<style>
+    .h2 {
+        font-weight: bold;
+        font-size: 3rem;
+        font-family: "Work Sans", sans-serif;
+    }
+
+    .h3 {
+        font-weight: bold;
+        font-size: 2rem;
+        font-family: "Work Sans", sans-serif;
+    }
+
+    .countainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        height: 100%;
+    }
+
+    .red {
+        background: #ef4e28;
+    }
+
+    .blue {
+        background: #3c9dfb;
+    }
+
+    body {
+        margin: unset;
+        height: 100vh;
+    }
+
+    .outer_container {
+        display: grid;
+        grid-template-columns:1fr 1fr;
+        height: 100vh;
+        color: white;
+    }
+
+
+</style>
+<body>
+<div class="outer_container">
+    <div id="red" class="countainer red">
+        <span class="h2">Red</span>
+        <div style="display: flex">
+            <span class="h3" style="padding: 0 2rem" id="red_life">-</span>
+        </div>
+    </div>
+    <div id="blue" class="countainer blue">
+        <span class="h2">Blue</span>
+        <div style="display: flex">
+            <span class="h3" style="padding: 0 2rem" id="blue_life">-</span>
+        </div>
+    </div>
+</div>
+<script>
+    const ws = new WebSocket("ws://localhost:8000/ws");
+    ws.onmessage = function (event) {
+        const red_life = document.getElementById("red_life");
+        const blue_life = document.getElementById("blue_life");
+        data = JSON.parse(event.data);
+
+        const red_container = document.getElementById("red");
+        const blue_container = document.getElementById("blue");
+
+        red_life.innerText = data?.red?.points ?? "-";
+        const red_percentage = (data?.red?.points / data?.red?._PointHolder__initial) * 100 ?? 100;
+        red_container.style.background = `linear-gradient(180deg, #515151 0%,#515151 ${100 - red_percentage}%, #ef4e28 ${100 - red_percentage}%,#ef4e28 100%)`;
+
+
+        const blue_percentage = (data?.blue?.points / data?.blue?._PointHolder__initial) * 100 ?? 100;
+        blue_container.style.background = `linear-gradient(180deg, #515151 0%,#515151 ${100 - blue_percentage}%, #3c9dfb ${100 - blue_percentage}%,#3c9dfb 100%)`;
+        blue_life.innerText = data?.blue?.points ?? "-";
+    };
+
+    function initData() {
+        setTimeout(() => {
+            ws.send("test");
+        }, 50);
+    }
+
+    initData();
+</script>
+</body>
+</html>
