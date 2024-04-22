@@ -139,12 +139,14 @@
     }
 
     function initData() {
-        setTimeout(() => {
+        if (ws.readyState !== 1) {
+            setTimeout(initData, 10);
+        } else {
             ws.send("init");
-        }, 200);
+        }
     }
 
-    initData();
+    window.addEventListener("load", () => initData())
 </script>
 </body>
 </html>
