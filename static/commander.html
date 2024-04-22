@@ -98,7 +98,7 @@
     </div>
 </div>
 <script>
-    const ws = new WebSocket("ws://localhost:8000/ws");
+    const ws = new WebSocket("wss://counter.skybitches.at/ws");
 
     ws.onmessage = function (event) {
         const red_life = document.getElementById("red_life");
@@ -139,8 +139,8 @@
 
     function initData() {
         setTimeout(() => {
-            ws.send("test");
-        }, 50);
+            ws.send("init");
+        }, 200);
     }
 
     initData();
