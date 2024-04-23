@@ -18,6 +18,15 @@ blue_key = "blue"
 
 manager = WSConnectionManager()
 
+#
+# @app.get("/static/bg.png")
+# async def bg():
+#     return FileResponse("static/bg.png")
+#
+# @app.get("/static/bg_blue.png")
+# async def bg():
+#     return FileResponse("static/bg_blue.png")
+
 
 @app.get("/")
 async def viewer():

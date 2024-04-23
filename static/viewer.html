@@ -23,20 +23,17 @@
     }
 
     .countainer {
-        display: flex;
-        align-items: center;
-        justify-content: center;
         gap: 0.5rem;
         height: 100%;
     }
 
-    .red {
-        background: #ef4e28;
-    }
+    /*.red {*/
+    /*    background: #ef4e28;*/
+    /*}*/
 
-    .blue {
-        background: #3c9dfb;
-    }
+    /*.blue {*/
+    /*    background: #3c9dfb;*/
+    /*}*/
 
     body {
         margin: unset;
@@ -50,21 +47,86 @@
         color: white;
     }
 
+    .hover-text-red {
+        position: absolute;
+        left: calc(25% - 8rem);
+        top: 50%;
+    }
+
+    .hover-text-blue {
+        position: absolute;
+        right: calc(25% - 8rem);
+        top: 50%;
+    }
+
+
+    .container-active {
+        height: 100%;
+        transition: height 1s;
+    }
+
+    .container-bg {
+        height: 0;
+        transition: height 1s;
+    }
+
+    .container-active.blue {
+        background-size: 400% 400% !important;
+        background: linear-gradient(#3c9dfb, #3c9dfb);
+        /*animation: gradient 200s ease infinite both;*/
+    }
+
+    .container-active.red {
+        background-size: 400% 400% !important;
+        background: linear-gradient(#a30404, #e30707);
+        /*animation: gradient 200s ease infinite both;*/
+    }
+
+    @keyframes gradient {
+        0% {
+            background-position: 100% 50%;
+        }
+        50% {
+            background-position: 80% 100%;
+        }
+        100% {
+            background-position: 100% 50%;
+        }
+    }
+
+
+    .container-bg.red {
+        background: #512222;
+    }
+
+    .container-active.blue {
+        /*background: #1da3d5;*/
+    }
+
+    .container-bg.blue {
+        background: #182d3e;
+    }
+
 
 </style>
 <body>
 <div class="outer_container">
     <div id="red" class="countainer red">
-        <span class="h2">Red</span>
-        <div style="display: flex">
+        <div class="hover-text-red">
+            <span class="h2">Red</span>
             <span class="h3" style="padding: 0 2rem" id="red_life">-</span>
         </div>
+        <div id="container-red-bg" class="container-bg red"></div>
+        <div id="container-red-active" class="container-active red"></div>
     </div>
     <div id="blue" class="countainer blue">
-        <span class="h2">Blue</span>
-        <div style="display: flex">
+        <div class="hover-text-blue">
+            <span class="h2">Blue</span>
             <span class="h3" style="padding: 0 2rem" id="blue_life">-</span>
         </div>
+        <div id="container-blue-bg" class="container-bg blue"></div>
+        <div id="container-blue-active" class="container-active blue"></div>
+
     </div>
 </div>
 <script>
@@ -74,17 +136,23 @@
         const blue_life = document.getElementById("blue_life");
         data = JSON.parse(event.data);
 
-        const red_container = document.getElementById("red");
-        const blue_container = document.getElementById("blue");
 
         red_life.innerText = data?.red?.points ?? "-";
         const red_percentage = (data?.red?.points / data?.red?._PointHolder__initial) * 100 ?? 100;
-        red_container.style.background = `linear-gradient(180deg, #515151 0%,#515151 ${100 - red_percentage}%, #ef4e28 ${100 - red_percentage}%,#ef4e28 100%)`;
+        const red_bg = document.getElementById("container-red-bg");
+        const red_active = document.getElementById("container-red-active");
+        red_bg.style.height = 100 - red_percentage + "%";
+        red_active.style.height = red_percentage + "%";
+        // red_container.style.background = `linear-gradient(180deg, ${red_drained_bg} 0%,${red_drained_bg} ${100 - red_percentage}%, ${red_active_bg} ${100 - red_percentage}%,${red_active_bg} 100%)`;
 
 
         const blue_percentage = (data?.blue?.points / data?.blue?._PointHolder__initial) * 100 ?? 100;
-        blue_container.style.background = `linear-gradient(180deg, #515151 0%,#515151 ${100 - blue_percentage}%, #3c9dfb ${100 - blue_percentage}%,#3c9dfb 100%)`;
         blue_life.innerText = data?.blue?.points ?? "-";
+        const blue_bg = document.getElementById("container-blue-bg");
+        const blue_active = document.getElementById("container-blue-active");
+        blue_bg.style.height = 100 - blue_percentage + "%";
+        blue_active.style.height = blue_percentage + "%";
+        // blue_container.style.background = `linear-gradient(180deg, ${blue_drained_bg} 0%,${blue_drained_bg} ${100 - blue_percentage}%, ${blue_active_bg} ${100 - blue_percentage}%,${blue_active_bg} 100%)`;
     };
 
     function initData() {
@@ -94,6 +162,7 @@
             ws.send("init");
         }
     }
+
     window.addEventListener("load", () => initData())
 
 </script>
