@@ -19,6 +19,16 @@
         color: white;
     }
 
+    .h3 {
+        font-weight: bold;
+        font-size: 1.3rem;
+        font-family: "Work Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+        user-select: none;
+        color: white;
+    }
+
     .countainer {
         display: flex;
         align-items: center;
@@ -73,7 +83,7 @@
         background: #515151;
         align-items: center;
         justify-content: center;
-        gap: 1rem
+        gap: .5rem
     }
 
     body {
@@ -88,6 +98,10 @@
     .rotated {
         transform: rotateZ(180deg);
     }
+
+    body * {
+        touch-action: manipulation;
+    }
 </style>
 <body>
 <div class="outer_container">
@@ -99,7 +113,7 @@
         </div>
     </div>
     <div class="spacer">
-        <span class="rotated h2">Red</span>
+        <span class="rotated h3">Red</span>
         <button class="rotated" id="red-win-0" onclick="set_win('red',0)">0</button>
         <button class="rotated" id="red-win-1" onclick="set_win('red',1)">1</button>
         <button class="rotated" id="red-win-2" onclick="set_win('red',2)">2</button>
@@ -110,7 +124,7 @@
         <button id="blue-win-2" onclick="set_win('blue',2)">2</button>
         <button id="blue-win-1" onclick="set_win('blue',1)">1</button>
         <button id="blue-win-0" onclick="set_win('blue',0)">0</button>
-        <span class="h2">Blue</span>
+        <span class="h3">Blue</span>
     </div>
     <div class="countainer blue">
         <div style="display: flex; align-items: center">
