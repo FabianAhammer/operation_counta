@@ -16,6 +16,7 @@
         font-optical-sizing: auto;
         font-style: normal;
         user-select: none;
+        color: white;
     }
 
     .countainer {
@@ -47,14 +48,14 @@
         border: none;
         color: white;
         font-weight: bold;
-        font-size: 3rem;
+        font-size: 1.5rem;
         width: max-content;
-        min-width: 5rem;
-        height: 5rem;
+        min-width: 3rem;
+        height: 3rem;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding-bottom: .5rem;
+        padding-bottom: .2rem;
     }
 
     .red {
@@ -72,7 +73,7 @@
         background: #515151;
         align-items: center;
         justify-content: center;
-        gap: 5rem
+        gap: 1rem
     }
 
     body {
@@ -82,6 +83,10 @@
 
     .wins-scored {
         background-color: #0ab10a !important;
+    }
+
+    .rotated {
+        transform: rotateZ(180deg);
     }
 </style>
 <body>
@@ -94,16 +99,18 @@
         </div>
     </div>
     <div class="spacer">
-        <button id="red-win-0" onclick="set_win('red',0)">0</button>
-        <button id="red-win-1" onclick="set_win('red',1)">1</button>
-        <button id="red-win-2" onclick="set_win('red',2)">2</button>
-        <button id="red-win-3" onclick="set_win('red',3)">3</button>
+        <span class="rotated h2">Red</span>
+        <button class="rotated" id="red-win-0" onclick="set_win('red',0)">0</button>
+        <button class="rotated" id="red-win-1" onclick="set_win('red',1)">1</button>
+        <button class="rotated" id="red-win-2" onclick="set_win('red',2)">2</button>
+        <button class="rotated" id="red-win-3" onclick="set_win('red',3)">3</button>
         <button style="background:#b03cdf !important;" onclick="reset()">Points ⟳</button>
         <button style="background:red !important;" onclick="restart()">Game ⟳</button>
         <button id="blue-win-3" onclick="set_win('blue',3)">3</button>
         <button id="blue-win-2" onclick="set_win('blue',2)">2</button>
         <button id="blue-win-1" onclick="set_win('blue',1)">1</button>
         <button id="blue-win-0" onclick="set_win('blue',0)">0</button>
+        <span class="h2">Blue</span>
     </div>
     <div class="countainer blue">
         <div style="display: flex; align-items: center">
@@ -113,6 +120,7 @@
         </div>
     </div>
 </div>
+</body>
 <script>
     // const ws = new WebSocket("ws://127.0.0.1:8000/ws");
     const ws = new WebSocket("wss://counter.skybitches.at/ws");
