@@ -10,7 +10,7 @@
 <style>
     .h2 {
         font-weight: bold;
-        font-size: 3rem;
+        font-size: 5rem;
         font-family: "Work Sans", sans-serif;
         user-select: none;
     }
@@ -55,13 +55,13 @@
 
     .hover-text-red {
         position: absolute;
-        left: calc(25% - 8rem);
+        left: calc(25% - 10rem);
         top: 50%;
     }
 
     .hover-text-blue {
         position: absolute;
-        right: calc(25% - 8rem);
+        right: calc(25% - 10rem);
         top: 50%;
     }
 
@@ -158,32 +158,32 @@
     <div class="points-wins-wrapper">
         <div id="red" class="countainer red">
             <div class="hover-text-red">
-                <span class="h2">Red</span>
-                <span class="h3" style="padding: 0 2rem" id="red_life">-</span>
+                <!--                <span class="h2">Red</span>-->
+                <span class="h2" style="padding: 0 2rem" id="red_life">-</span>
             </div>
             <div id="container-red-bg" class="container-bg red"></div>
             <div id="container-red-active" class="container-active red"></div>
         </div>
-        <div class="wins" style="justify-content: flex-start">
-            <div></div>
-            <div class="wins-container" id="wins-1-red"></div>
+        <div class="wins" style="justify-content: flex-end">
             <div class="wins-container" id="wins-2-red"></div>
+            <div class="wins-container" id="wins-1-red"></div>
+            <div></div>
         </div>
     </div>
     <div class="point_spacer"></div>
     <div class="points-wins-wrapper">
         <div id="blue" class="countainer blue">
             <div class="hover-text-blue">
-                <span class="h2">Blue</span>
-                <span class="h3" style="padding: 0 2rem" id="blue_life">-</span>
+                <!--                <span class="h2">Blue</span>-->
+                <span class="h2" style="padding: 0 2rem" id="blue_life">-</span>
             </div>
             <div id="container-blue-bg" class="container-bg blue"></div>
             <div id="container-blue-active" class="container-active blue"></div>
         </div>
-        <div class="wins" style="justify-content: flex-end; padding-right: 2rem">
-            <div class="inverted-wins-container" id="wins-2-blue"></div>
-            <div class="inverted-wins-container" id="wins-1-blue"></div>
+        <div class="wins" style="justify-content: flex-start">
             <div></div>
+            <div class="inverted-wins-container" id="wins-1-blue"></div>
+            <div class="inverted-wins-container" id="wins-2-blue"></div>
         </div>
     </div>
 </div>
