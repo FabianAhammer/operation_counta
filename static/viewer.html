@@ -25,6 +25,7 @@
     .countainer {
         gap: 0.5rem;
         height: 100%;
+        flex: 1;
     }
 
     /*.red {*/
@@ -38,13 +39,18 @@
     body {
         margin: unset;
         height: 100vh;
+        overflow: hidden;
     }
 
     .outer_container {
         display: grid;
-        grid-template-columns:1fr 1fr;
+        grid-template-columns:1fr .5rem 1fr;
         height: 100vh;
         color: white;
+    }
+
+    .point_spacer {
+        background: #424141;
     }
 
     .hover-text-red {
@@ -63,6 +69,7 @@
     .container-active {
         height: 100%;
         transition: height 1s;
+        max-height: 100%;
     }
 
     .container-bg {
@@ -108,52 +115,116 @@
     }
 
 
+    /*Wins */
+    .points-wins-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .wins {
+        background: #515151;
+        height: 4rem;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        /*gap: 4rem;*/
+        gap: 3rem;
+    }
+
+    .wins-container {
+        width: 8rem;
+        background: #434343;
+        height: 3rem;
+        border-radius: 3rem 0 3rem 0;
+        border: .2rem #656464;
+    }
+
+    .inverted-wins-container {
+        width: 8rem;
+        background: #434343;
+        height: 3rem;
+        border-radius: 0 3rem 0 3rem;
+        border: .2rem #656464;
+    }
+
+    .wins-scored {
+        background: #21ef21;
+    }
+
+
 </style>
 <body>
 <div class="outer_container">
-    <div id="red" class="countainer red">
-        <div class="hover-text-red">
-            <span class="h2">Red</span>
-            <span class="h3" style="padding: 0 2rem" id="red_life">-</span>
+    <div class="points-wins-wrapper">
+        <div id="red" class="countainer red">
+            <div class="hover-text-red">
+                <span class="h2">Red</span>
+                <span class="h3" style="padding: 0 2rem" id="red_life">-</span>
+            </div>
+            <div id="container-red-bg" class="container-bg red"></div>
+            <div id="container-red-active" class="container-active red"></div>
         </div>
-        <div id="container-red-bg" class="container-bg red"></div>
-        <div id="container-red-active" class="container-active red"></div>
+        <div class="wins" style="justify-content: flex-start">
+            <div></div>
+            <div class="wins-container" id="wins-1-red"></div>
+            <div class="wins-container" id="wins-2-red"></div>
+            <div class="wins-container" id="wins-3-red"></div>
+        </div>
     </div>
-    <div id="blue" class="countainer blue">
-        <div class="hover-text-blue">
-            <span class="h2">Blue</span>
-            <span class="h3" style="padding: 0 2rem" id="blue_life">-</span>
+    <div class="point_spacer"></div>
+    <div class="points-wins-wrapper">
+        <div id="blue" class="countainer blue">
+            <div class="hover-text-blue">
+                <span class="h2">Blue</span>
+                <span class="h3" style="padding: 0 2rem" id="blue_life">-</span>
+            </div>
+            <div id="container-blue-bg" class="container-bg blue"></div>
+            <div id="container-blue-active" class="container-active blue"></div>
         </div>
-        <div id="container-blue-bg" class="container-bg blue"></div>
-        <div id="container-blue-active" class="container-active blue"></div>
-
+        <div class="wins" style="justify-content: flex-end; padding-right: 2rem">
+            <div class="inverted-wins-container" id="wins-3-blue"></div>
+            <div class="inverted-wins-container" id="wins-2-blue"></div>
+            <div class="inverted-wins-container" id="wins-1-blue"></div>
+            <div></div>
+        </div>
     </div>
 </div>
 <script>
-    const ws = new WebSocket("wss://counter.skybitches.at/ws");
+    // const ws = new WebSocket("wss://counter.skybitches.at/ws");
+    const ws = new WebSocket("ws://127.0.0.1:8000/ws");
     ws.onmessage = function (event) {
         const red_life = document.getElementById("red_life");
         const blue_life = document.getElementById("blue_life");
         data = JSON.parse(event.data);
 
-
-        red_life.innerText = data?.red?.points ?? "-";
-        const red_percentage = (data?.red?.points / data?.red?._PointHolder__initial) * 100 ?? 100;
-        const red_bg = document.getElementById("container-red-bg");
-        const red_active = document.getElementById("container-red-active");
-        red_bg.style.height = 100 - red_percentage + "%";
-        red_active.style.height = red_percentage + "%";
-        // red_container.style.background = `linear-gradient(180deg, ${red_drained_bg} 0%,${red_drained_bg} ${100 - red_percentage}%, ${red_active_bg} ${100 - red_percentage}%,${red_active_bg} 100%)`;
-
-
-        const blue_percentage = (data?.blue?.points / data?.blue?._PointHolder__initial) * 100 ?? 100;
-        blue_life.innerText = data?.blue?.points ?? "-";
-        const blue_bg = document.getElementById("container-blue-bg");
-        const blue_active = document.getElementById("container-blue-active");
-        blue_bg.style.height = 100 - blue_percentage + "%";
-        blue_active.style.height = blue_percentage + "%";
-        // blue_container.style.background = `linear-gradient(180deg, ${blue_drained_bg} 0%,${blue_drained_bg} ${100 - blue_percentage}%, ${blue_active_bg} ${100 - blue_percentage}%,${blue_active_bg} 100%)`;
+        handleDataChange(red_life, document.getElementById("container-red-bg"), document.getElementById("container-red-active"), getWinContainers("red"), data?.red);
+        handleDataChange(blue_life, document.getElementById("container-blue-bg"), document.getElementById("container-blue-active"), getWinContainers("blue"), data?.blue);
     };
+
+
+    function handleDataChange(life_container, bg_element, active_bg_element, win_containers, specific_data) {
+        life_container.innerText = specific_data?.points ?? "-";
+        const percentage = (specific_data?.points / specific_data?._PointHolder__initial) * 100 ?? 100;
+        bg_element.style.height = 100 - percentage + "%";
+        active_bg_element.style.height = Math.max(percentage, 100) + "%";
+
+        win_containers.forEach((container, i) => {
+            if (i + 1 <= specific_data.wins) {
+                container.classList.add("wins-scored")
+            } else {
+                container.classList.remove("wins-scored")
+            }
+        })
+    }
+
+    function getWinContainers(side) {
+        return [
+            document.getElementById(`wins-1-${side}`),
+            document.getElementById(`wins-2-${side}`),
+            document.getElementById(`wins-3-${side}`),
+        ]
+    }
+
 
     function initData() {
         if (ws.readyState !== 1) {

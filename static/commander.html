@@ -48,7 +48,8 @@
         color: white;
         font-weight: bold;
         font-size: 3rem;
-        width: 5rem;
+        width: max-content;
+        min-width: 5rem;
         height: 5rem;
         display: flex;
         justify-content: center;
@@ -71,11 +72,16 @@
         background: #515151;
         align-items: center;
         justify-content: center;
+        gap: 5rem
     }
 
     body {
         margin: unset;
         height: 100vh;
+    }
+
+    .wins-scored {
+        background-color: #0ab10a !important;
     }
 </style>
 <body>
@@ -88,7 +94,16 @@
         </div>
     </div>
     <div class="spacer">
-        <button onclick="reset()">⟳</button>
+        <button id="red-win-0" onclick="set_win('red',0)">0</button>
+        <button id="red-win-1" onclick="set_win('red',1)">1</button>
+        <button id="red-win-2" onclick="set_win('red',2)">2</button>
+        <button id="red-win-3" onclick="set_win('red',3)">3</button>
+        <button style="background:#b03cdf !important;" onclick="reset()">Points ⟳</button>
+        <button style="background:red !important;" onclick="restart()">Game ⟳</button>
+        <button id="blue-win-3" onclick="set_win('blue',3)">3</button>
+        <button id="blue-win-2" onclick="set_win('blue',2)">2</button>
+        <button id="blue-win-1" onclick="set_win('blue',1)">1</button>
+        <button id="blue-win-0" onclick="set_win('blue',0)">0</button>
     </div>
     <div class="countainer blue">
         <div style="display: flex; align-items: center">
@@ -99,24 +114,48 @@
     </div>
 </div>
 <script>
-    const ws = new WebSocket("wss://counter.skybitches.at/ws");
+    const ws = new WebSocket("ws://127.0.0.1:8000/ws");
+    // const ws = new WebSocket("wss://counter.skybitches.at/ws");
 
     ws.onmessage = function (event) {
         const red_life = document.getElementById("red_life");
         const blue_life = document.getElementById("blue_life");
         data = JSON.parse(event.data);
 
+
         red_life.innerText = data?.red?.points ?? "-";
         blue_life.innerText = data?.blue?.points ?? "-";
 
+        const red_wins_buttons = [
+            document.getElementById("red-win-0"),
+            document.getElementById("red-win-1"),
+            document.getElementById("red-win-2"),
+            document.getElementById("red-win-3"),
+        ]
 
-        setTimeout(() => {
-            if (data.red.points === 0) {
-                alert("Blue Wins!");
-            } else if (data.blue.points === 0) {
-                alert("Red Wins!");
+        red_wins_buttons.forEach((e, i) => {
+            if (i === data.red.wins) {
+                e.classList.add("wins-scored");
+            } else {
+                e.classList.remove("wins-scored")
             }
-        }, 100);
+        })
+
+        const blue_wins_buttons = [
+            document.getElementById("blue-win-0"),
+            document.getElementById("blue-win-1"),
+            document.getElementById("blue-win-2"),
+            document.getElementById("blue-win-3"),
+        ]
+
+        blue_wins_buttons.forEach((e, i) => {
+            if (i === data.blue.wins) {
+                e.classList.add("wins-scored");
+            } else {
+                e.classList.remove("wins-scored")
+            }
+        })
+
 
     };
 
@@ -132,11 +171,32 @@
         xhr.send(null);
     }
 
+    function set_win(side, amount) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/wins?side=${side}&amount=${amount}`, true);
+        xhr.send(null);
+    }
+
     function reset() {
         const xhr = new XMLHttpRequest();
         xhr.open("GET", `/reset`, true);
         xhr.send(null);
     }
+
+
+    function trigger_restart() {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/restart`, true);
+        xhr.send(null);
+    }
+
+    function restart() {
+        let bool = confirm("Are you sure you want to restart the game?")
+        if (bool) {
+            trigger_restart();
+        }
+    }
+
 
     function initData() {
         if (ws.readyState !== 1) {

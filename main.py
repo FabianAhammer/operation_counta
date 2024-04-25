@@ -18,6 +18,7 @@ blue_key = "blue"
 
 manager = WSConnectionManager()
 
+
 #
 # @app.get("/static/bg.png")
 # async def bg():
@@ -59,10 +60,26 @@ async def decrease_counter(side: str, amount: int = 1):
     await broadcast_response_to_all_clients()
 
 
-@app.get("/reset")
-async def reset_counter():
+@app.get("/wins")
+async def set_wins(side: str, amount: int = 1):
+    if side == red_key:
+        red.set_wins(amount)
+    elif side == blue_key:
+        blue.set_wins(amount)
+    await broadcast_response_to_all_clients()
+
+
+@app.get("/restart")
+async def restart():
     red.reset()
     blue.reset()
+    await broadcast_response_to_all_clients()
+
+
+@app.get("/reset")
+async def reset_counter():
+    red.reset_points()
+    blue.reset_points()
     await broadcast_response_to_all_clients()
 
 
