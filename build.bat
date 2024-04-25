@@ -1,2 +1,2 @@
-docker build -t registry.skybitches.at/operation-counta .
-docker push registry.skybitches.at/operation-counta
+docker build -t registry.skybitches.at/operation-counta-v2 .
+docker push registry.skybitches.at/operation-counta-v2

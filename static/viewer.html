@@ -190,8 +190,8 @@
     </div>
 </div>
 <script>
-    // const ws = new WebSocket("wss://counter.skybitches.at/ws");
-    const ws = new WebSocket("ws://127.0.0.1:8000/ws");
+    const ws = new WebSocket("wss://counter.skybitches.at/ws");
+    // const ws = new WebSocket("ws://127.0.0.1:8000/ws");
     ws.onmessage = function (event) {
         const red_life = document.getElementById("red_life");
         const blue_life = document.getElementById("blue_life");
