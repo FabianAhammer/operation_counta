@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Commander</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
+</head>
+<style>
+    .h2 {
+        font-weight: bold;
+        font-size: 2rem;
+        font-family: "Work Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+        user-select: none;
+        color: white;
+    }
+
+    .countainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        color: white;
+        flex: 1;
+    }
+
+    .outer_container {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 6rem 1fr;
+        height: 100vh;
+    }
+
+    .outer_container > countainer {
+        height: 100%;
+        flex: 1;
+    }
+
+    .outer_container button {
+        border-radius: 10rem;
+        font-family: "Work Sans", sans-serif;
+        outline: none;
+        background-color: rgba(218, 217, 217, 0.34);
+        border: none;
+        color: white;
+        font-weight: bold;
+        font-size: 1.5rem;
+        width: max-content;
+        min-width: 3rem;
+        height: 3rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: .2rem;
+    }
+
+    .red {
+        transform: rotateZ(180deg);
+        background: #ef4e28;
+    }
+
+    .blue {
+        background: #3c9dfb
+    }
+
+    .spacer {
+        display: flex;
+        height: 100%;
+        background: #515151;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem
+    }
+
+    body {
+        margin: unset;
+        height: 100vh;
+    }
+
+    .wins-scored {
+        background-color: #0ab10a !important;
+    }
+
+    .rotated {
+        transform: rotateZ(180deg);
+    }
+</style>
+<body>
+<div class="outer_container">
+    <div class="countainer red">
+        <div style="display: flex;align-items: center">
+            <button onclick="decrease('red')">-</button>
+            <span class="h2" style="padding: 0 2rem" id="red_life">-</span>
+            <button onclick="increase('red')">+</button>
+        </div>
+    </div>
+    <div class="spacer">
+        <span class="rotated h2">Red</span>
+        <button class="rotated" id="red-win-0" onclick="set_win('red',0)">0</button>
+        <button class="rotated" id="red-win-1" onclick="set_win('red',1)">1</button>
+        <button class="rotated" id="red-win-2" onclick="set_win('red',2)">2</button>
+        <!--        <button class="rotated" id="red-win-3" onclick="set_win('red',3)">3</button>-->
+        <button style="background:#b03cdf !important;" onclick="reset()">Points ⟳</button>
+        <button style="background:red !important;" onclick="restart()">Game ⟳</button>
+        <!--        <button id="blue-win-3" onclick="set_win('blue',3)">3</button>-->
+        <button id="blue-win-2" onclick="set_win('blue',2)">2</button>
+        <button id="blue-win-1" onclick="set_win('blue',1)">1</button>
+        <button id="blue-win-0" onclick="set_win('blue',0)">0</button>
+        <span class="h2">Blue</span>
+    </div>
+    <div class="countainer blue">
+        <div style="display: flex; align-items: center">
+            <button onclick="decrease('blue')">-</button>
+            <span class="h2" style="padding: 0 2rem" id="blue_life">-</span>
+            <button onclick="increase('blue')">+</button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    // const ws = new WebSocket("ws://127.0.0.1:8000/ws");
+    const ws = new WebSocket("wss://counter.skybitches.at/ws");
+
+    ws.onmessage = function (event) {
+        const red_life = document.getElementById("red_life");
+        const blue_life = document.getElementById("blue_life");
+        data = JSON.parse(event.data);
+
+
+        red_life.innerText = data?.red?.points ?? "-";
+        blue_life.innerText = data?.blue?.points ?? "-";
+
+        const red_wins_buttons = [
+            document.getElementById("red-win-0"),
+            document.getElementById("red-win-1"),
+            document.getElementById("red-win-2"),
+            document.getElementById("red-win-3"),
+        ].filter(e => e)
+
+        red_wins_buttons.forEach((e, i) => {
+            if (i === data.red.wins) {
+                e.classList.add("wins-scored");
+            } else {
+                e.classList.remove("wins-scored")
+            }
+        })
+
+        const blue_wins_buttons = [
+            document.getElementById("blue-win-0"),
+            document.getElementById("blue-win-1"),
+            document.getElementById("blue-win-2"),
+            document.getElementById("blue-win-3"),
+        ].filter(e => e)
+
+        blue_wins_buttons.forEach((e, i) => {
+            if (i === data.blue.wins) {
+                e.classList.add("wins-scored");
+            } else {
+                e.classList.remove("wins-scored")
+            }
+        })
+
+
+    };
+
+    function increase(side) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/increase?side=${side}`, true);
+        xhr.send(null);
+    }
+
+    function decrease(side) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/decrease?side=${side}`, true);
+        xhr.send(null);
+    }
+
+    function set_win(side, amount) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/wins?side=${side}&amount=${amount}`, true);
+        xhr.send(null);
+    }
+
+    function reset() {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/reset`, true);
+        xhr.send(null);
+    }
+
+
+    function trigger_restart() {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `/restart`, true);
+        xhr.send(null);
+    }
+
+    function restart() {
+        let bool = confirm("Are you sure you want to restart the game?")
+        if (bool) {
+            trigger_restart();
+        }
+    }
+
+
+    function initData() {
+        if (ws.readyState !== 1) {
+            setTimeout(initData, 10);
+        } else {
+            ws.send("init");
+        }
+    }
+
+    window.addEventListener("load", () => initData())
+</script>
+</body>
+</html>

@@ -30,13 +30,28 @@ manager = WSConnectionManager()
 
 
 @app.get("/")
-async def viewer():
-    return FileResponse("static/viewer.html")
+async def home():
+    return FileResponse("static/selector.html")
 
 
-@app.get("/commander")
+@app.get("/bo3")
 async def viewer():
-    return FileResponse("static/commander.html")
+    return FileResponse("static/bo3-viewer.html")
+
+
+@app.get("/bo3/commander")
+async def viewer():
+    return FileResponse("static/bo3-commander.html")
+
+
+@app.get("/bo5")
+async def viewer():
+    return FileResponse("static/bo5-viewer.html")
+
+
+@app.get("/bo5/commander")
+async def viewer():
+    return FileResponse("static/bo5-commander.html")
 
 
 @app.get("/increase")

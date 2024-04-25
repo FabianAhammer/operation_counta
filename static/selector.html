@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Commander</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
+</head>
+<style>
+
+    .outer_container {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        height: 100vh;
+    }
+
+    .outer_container > countainer {
+        height: 100%;
+        flex: 1;
+    }
+
+    .outer_container button {
+        border-radius: 10rem;
+        font-family: "Work Sans", sans-serif;
+        outline: none;
+        background-color: rgba(218, 217, 217, 0.34);
+        border: none;
+        color: white;
+        font-weight: bold;
+        font-size: 1.5rem;
+        width: max-content;
+        min-width: 3rem;
+        height: 3rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding: 3rem;
+    }
+
+    .spacer {
+        display: flex;
+        height: 100%;
+        background: #515151;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem
+    }
+
+    body {
+        margin: unset;
+        height: 100vh;
+    }
+
+</style>
+<body>
+<div class="outer_container">
+    <div class="spacer">
+        <button style="background:#3ca6df !important;" onclick="navigate_bo_3()">Best of 3</button>
+        <button style="background:red !important;" onclick="navigate_bo_5()">Best of 5</button>
+    </div>
+</div>
+</body>
+<script>
+    function navigate_bo_3() {
+        location.replace("/bo3");
+    }
+
+    function navigate_bo_5() {
+        location.replace("/bo5");
+    }
+</script>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
+</head>
+<style>
+    .h2 {
+        font-weight: bold;
+        font-size: 3rem;
+        font-family: "Work Sans", sans-serif;
+        user-select: none;
+    }
+
+    .h3 {
+        font-weight: bold;
+        font-size: 2rem;
+        font-family: "Work Sans", sans-serif;
+        user-select: none;
+    }
+
+    .countainer {
+        gap: 0.5rem;
+        height: 100%;
+        flex: 1;
+    }
+
+    /*.red {*/
+    /*    background: #ef4e28;*/
+    /*}*/
+
+    /*.blue {*/
+    /*    background: #3c9dfb;*/
+    /*}*/
+
+    body {
+        margin: unset;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .outer_container {
+        display: grid;
+        grid-template-columns:1fr .5rem 1fr;
+        height: 100vh;
+        color: white;
+    }
+
+    .point_spacer {
+        background: #424141;
+    }
+
+    .hover-text-red {
+        position: absolute;
+        left: calc(25% - 8rem);
+        top: 50%;
+    }
+
+    .hover-text-blue {
+        position: absolute;
+        right: calc(25% - 8rem);
+        top: 50%;
+    }
+
+
+    .container-active {
+        height: 100%;
+        transition: height 1s;
+        max-height: 100%;
+    }
+
+    .container-bg {
+        height: 0;
+        transition: height 1s;
+    }
+
+    .container-active.blue {
+        background-size: 400% 400% !important;
+        background: linear-gradient(#3c9dfb, #3c9dfb);
+        /*animation: gradient 200s ease infinite both;*/
+    }
+
+    .container-active.red {
+        background-size: 400% 400% !important;
+        background: linear-gradient(#ef4e28, #ef4e28);
+        /*animation: gradient 200s ease infinite both;*/
+    }
+
+    @keyframes gradient {
+        0% {
+            background-position: 100% 50%;
+        }
+        50% {
+            background-position: 80% 100%;
+        }
+        100% {
+            background-position: 100% 50%;
+        }
+    }
+
+
+    .container-bg.red {
+        background: #512222;
+    }
+
+    .container-active.blue {
+        /*background: #1da3d5;*/
+    }
+
+    .container-bg.blue {
+        background: #182d3e;
+    }
+
+
+    /*Wins */
+    .points-wins-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .wins {
+        background: #515151;
+        height: 4rem;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        /*gap: 4rem;*/
+        gap: 3rem;
+    }
+
+    .wins-container {
+        width: 4rem;
+        background: #434343;
+        height: 3rem;
+        border-radius: 1.5rem 0.1rem 1.5rem 0.1rem;
+        border: .2rem #656464;
+    }
+
+    .inverted-wins-container {
+        width: 4rem;
+        background: #434343;
+        height: 3rem;
+        border-radius: 0.1rem 1.5rem 0.1rem 1.5rem;
+        border: .2rem #656464;
+    }
+
+    .wins-scored {
+        background: #21ef21;
+    }
+
+
+</style>
+<body>
+<div class="outer_container">
+    <div class="points-wins-wrapper">
+        <div id="red" class="countainer red">
+            <div class="hover-text-red">
+                <span class="h2">Red</span>
+                <span class="h3" style="padding: 0 2rem" id="red_life">-</span>
+            </div>
+            <div id="container-red-bg" class="container-bg red"></div>
+            <div id="container-red-active" class="container-active red"></div>
+        </div>
+        <div class="wins" style="justify-content: flex-start">
+            <div></div>
+            <div class="wins-container" id="wins-1-red"></div>
+            <div class="wins-container" id="wins-2-red"></div>
+        </div>
+    </div>
+    <div class="point_spacer"></div>
+    <div class="points-wins-wrapper">
+        <div id="blue" class="countainer blue">
+            <div class="hover-text-blue">
+                <span class="h2">Blue</span>
+                <span class="h3" style="padding: 0 2rem" id="blue_life">-</span>
+            </div>
+            <div id="container-blue-bg" class="container-bg blue"></div>
+            <div id="container-blue-active" class="container-active blue"></div>
+        </div>
+        <div class="wins" style="justify-content: flex-end; padding-right: 2rem">
+            <div class="inverted-wins-container" id="wins-2-blue"></div>
+            <div class="inverted-wins-container" id="wins-1-blue"></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+<script>
+    const ws = new WebSocket("wss://counter.skybitches.at/ws");
+    // const ws = new WebSocket("ws://127.0.0.1:8000/ws");
+    ws.onmessage = function (event) {
+        const red_life = document.getElementById("red_life");
+        const blue_life = document.getElementById("blue_life");
+        data = JSON.parse(event.data);
+
+        handleDataChange(red_life, document.getElementById("container-red-bg"), document.getElementById("container-red-active"), getWinContainers("red"), data?.red);
+        handleDataChange(blue_life, document.getElementById("container-blue-bg"), document.getElementById("container-blue-active"), getWinContainers("blue"), data?.blue);
+    };
+
+
+    function handleDataChange(life_container, bg_element, active_bg_element, win_containers, specific_data) {
+        life_container.innerText = specific_data?.points ?? "-";
+        const percentage = (specific_data?.points / specific_data?._PointHolder__initial) * 100 ?? 100;
+        bg_element.style.height = 100 - percentage + "%";
+        active_bg_element.style.height = Math.max(percentage, 100) + "%";
+
+        win_containers.forEach((container, i) => {
+            if (i + 1 <= specific_data.wins) {
+                container.classList.add("wins-scored")
+            } else {
+                container.classList.remove("wins-scored")
+            }
+        })
+    }
+
+    function getWinContainers(side) {
+        return [
+            document.getElementById(`wins-1-${side}`),
+            document.getElementById(`wins-2-${side}`),
+            document.getElementById(`wins-3-${side}`),
+        ].filter(e => e)
+    }
+
+
+    function initData() {
+        if (ws.readyState !== 1) {
+            setTimeout(initData, 10);
+        } else {
+            ws.send("init");
+        }
+    }
+
+    window.addEventListener("load", () => initData())
+
+</script>
+</body>
+</html>
